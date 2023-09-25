@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "module": "NodeNext", // to support import feture instead require (CommorJS)
+    "moduleResolution": "NodeNext",
+    "target": "ES2020", // ts is comipled down to ES2020
+    "sourceMap": true, // help in debugging
+    "outDir": "dist" // this is where all the comiled js will live
+  },
+  "include": ["src/**/*"] // where it will search for ts files
+}
