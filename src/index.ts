@@ -1,14 +1,14 @@
-import express, {
-  Request,
-  Response,
-  NextFunction,
-  RequestHandler,
-} from "express";
+import express from "express";
 import pkg from "body-parser";
-import { addProduct, deleteProduct, getAllProducts } from "./db/product.js";
 import "dotenv/config";
 import mongoose from "mongoose";
 import cors from "cors";
+
+import userRoutes from "./routes/user.js";
+import productRoutes from "./routes/product.js";
+import cartRoutes from "./routes/cart.js";
+
+import { checkAuth } from "./middlewares/auth.js";
 
 const { json } = pkg;
 const app = express();
@@ -16,13 +16,10 @@ app.use(json()); // this will parse any request and get any json inside any req.
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-const username = process.env.USERNAME;
-const password = process.env.PASSWORD;
+const mongoUrl = process.env.MONGO_URL;
 
 mongoose
-  .connect(
-    `mongodb+srv://${username}:${password}@cluster0.ljptmfg.mongodb.net/`
-  )
+  .connect(mongoUrl)
   .then((res) => {
     if (res) {
       app.listen(4000, () => {
@@ -34,38 +31,16 @@ mongoose
     console.log("🛑 error in connecting with db : ", err);
   });
 
-app.get("/", (req, res, next): RequestHandler => {
-  res.json({ message: "hello world" });
-  return;
-});
+// app.get("/", (req, res, next): RequestHandler => {
+//   res.status(200).json({ message: "how u doin?" });
+// });
 
-// products routes - start
+app.use("/user", userRoutes);
+app.use(checkAuth);
+app.use("/products", productRoutes);
+app.use("/cart", cartRoutes);
 
-app.get("/products", async (req, res, next) => {
-  const products = await getAllProducts();
-  res.json({ products: products });
-  return;
-});
+// admin@gmail.com
+// 123
 
-app.post("/products", async (req: Request, res: Response, next) => {
-  const product = req.body;
-  await addProduct(product);
-  res.status(200).json({ message: "product created" });
-  return;
-});
-
-app.delete("/products/:id", async (req, res, next) => {
-  const id = req.params.id;
-  console.log("id: ", id);
-  await deleteProduct(id);
-  res.status(200).json({ message: "product deleted" });
-  return;
-});
-
-// products routes - end
-
-// cart routes - start
-
-
-
-// cart routes - end
+// TODO add ts-node to use nodemon

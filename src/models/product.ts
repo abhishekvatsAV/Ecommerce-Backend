@@ -11,19 +11,20 @@ const productSchema = new mongoose.Schema({
 const ProductModel = mongoose.model("Product", productSchema);
 export default ProductModel;
 
-export const getAllProducts = async () => {
+export const getAllProducts_db = async () => {
   return await ProductModel.find();
 };
 
-export const getProductById = async (id: string) => {
-  return await ProductModel.find({ _id: id });
+export const getProductById_db = async (id: string) => {
+  return await ProductModel.findById(id);
 };
 
-export const addProduct = async (product: any) => {
+export const addProduct_db = async (product: any) => {
   const newProduct = new ProductModel(product);
+  console.log("🔥  file: product.ts:24  newProduct: ", newProduct);
   return await newProduct.save();
 };
 
-export const deleteProduct = async (id: string) => {
+export const deleteProduct_db = async (id: string) => {
   return await ProductModel.deleteOne({ _id: id });
 };
